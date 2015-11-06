@@ -122,8 +122,8 @@ INSERT INTO ag.transportadora (empresa_id, nome, cnpjcpf, endereco, municipio_id
 	from importaag.transportadora t left join importaag.cidade m on (t.municipio_id=m.id)
 	left join cadastro.cidade c on (c.id=m.id) where empresa_id=1;
 	SELECT setval('ag.transportadora_id_seq', (select max(x.id) from ag.transportadora x), true);
--- Representante
 
+-- Representante
 INSERT INTO cadastro.representante (empresa_id, id, nome, cnpjcpf, tabeladecomissao_id, cep, logradouro, numero, complemento, bairro, municipio_id, fone, celular,
 fax, contato, obs, email, fornecedor_id, vencimento, retemirrf, referencia)
 select r.empresa_id, r.id, r.nome, r.cnpjcpf, r.tabeladecomissao_id, r.cep, r.logradouro, r.numero, r.complemento, r.bairro, c.id, r.fone, r.celular,
@@ -163,12 +163,20 @@ inssemp, inssbase, issvalor, issbase, irrfbase, irrfcpf, irrfcnpj, pisbase, pisv
 -- contas a pagar - Vencimentos
 INSERT INTO ag.contasapagarvencimentos (empresa_id, contasapagar_id, data, sequencial, numtitulo, quitado, valor, datacancelamento, motivocancelamento, autorizado, codigobarras, 
 banco_id, valorbruto, enviado, desconto, agencia, cc, dvagencia, fornecedor_id, dvconta, amortizacao,
-encargos) 
+encargos, receitadespesa_id) 
 	select empresa_id, contasapagar_id, data, sequencial, numtitulo, quitado, valor, datacancelamento, motivocancelamento, 
 	case autorizado when 0 then false else true end, codigobarras, 
 	banco_id, valorbruto, case enviado when 0 then false else true end, desconto, agencia, cc, dvagencia, fornecedor_id, dvconta, amortizacao,
-	encargos from importaag.contasapagarvencimentos where empresa_id=1;
+	encargos, receitadespesa_id from importaag.contasapagarvencimentos where empresa_id=1;
 	SELECT setval('ag.contasapagarvencimentos_id_seq', (select max(x.id) from ag.contasapagarvencimentos x), true);
+
+-- Contas a pagar - Vencimentos Baixas
+INSERT INTO ag.contasapagarvencimentosbaixas (empresa_id, codigovencimento, datavencimento, sequencialvencimento, sequencial, data, valor, desconto, juros,
+	automatica, datacancel, obscancel, multa, exportaac, jaexportado)
+select empresa_id, codigovencimento, datavencimento, sequencialvencimento, sequencial, data, valor, desconto, juros,
+	case automatica when 0 then false else true end, datacancel, obscancel, multa, case exportaac when 0 then false else true end, 
+	case jaexportado when 0 then false else true end from importaag.contasapagarvencimentosbaixas where empresa_id=1;
+	SELECT setval('ag.contasapagarvencimentosbaixas_id_seq', (select max(x.id) from ag.contasapagarvencimentosbaixas x), true);
 	
 -- Lancamentos
 INSERT INTO ag.lancamentos (empresa_id, id, estabelecimento_id, contafinanceira_id, data, sequencial, centroresultado_id, receitadespesa_id, valor,
@@ -180,11 +188,3 @@ natureza, origem, historicopadrao_id, jaexportado, exportarac)
 	case exportaac when 0 then false else true end
 	from importaag.lancamentos where empresa_id=1;
 	SELECT setval('ag.lancamentos_id_seq', (select max(x.id) from ag.lancamentos x), true);
-
-select * from importaag.cidade where id=1002
-select * from cadastro.cidade order by id
-select * from importaag.cidade cag left join cadastro.cidade c on (c.id=cag.id)
-select * from importaag.cidade as cag, cadastro.cidade c where c.id <> cag.id
-
-select * from cadastro.uf
-select * from importaag.uf uag left join cadastro.uf uf on (uf.sigla=uag.sigla)
