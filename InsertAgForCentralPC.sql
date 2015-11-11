@@ -1,13 +1,13 @@
-﻿INSERT INTO cadastro.cidade (id, nome) values (1002, 'ANGICAL-PI')
-INSERT INTO cadastro.cidade (id, nome) values (85774, 'VARZEA GRANDE-PI')
-INSERT INTO cadastro.cidade (id, nome) values (99999, 'TIMON-PI')
+﻿INSERT INTO cadastro.cidade (id, nome) values (1002, 'ANGICAL-PI');
+INSERT INTO cadastro.cidade (id, nome) values (85774, 'VARZEA GRANDE-PI');
+INSERT INTO cadastro.cidade (id, nome) values (99999, 'TIMON-PI');
 
 
 -- Empresa
 INSERT INTO cadastro.empresa (id, nome, apelido, logomarca, inss, im) 
 	select id, nome, apelido, logotipo, case inss when 0 then false else true end, im from importaag.empresa where id=1;
 	SELECT setval('cadastro.empresa_id_seq', (select max(x.id) from cadastro.empresa x), true);
--- Pais
+-- Pais --  UPDATE importaag.pais SET sigla = 'PA' WHERE sigla is null
 INSERT INTO cadastro.pais (id, nome, sigla)
 	select id, nome, sigla from importaag.pais;
 	
@@ -66,6 +66,7 @@ iss, logradouro, mnemonico, numero, optantesimples, regimeconfins, regimeespecia
 	SELECT setval('cadastro.estabelecimento_id_seq', (select max(x.id) from cadastro.estabelecimento x), true);
 
 -- HistoricoPadrao -----> UPDATE importaag.historicopadrao SET historico = 'historico' WHERE historico is null
+
 INSERT INTO cadastro.historicopadrao (id, empresa_id, descricao, historico, tipo)
 	select id, empresa_id, descricao, historico, case tipo when 'L' then 0  when 'T' then 1 when 'R' then 2 when 'P' then 3 
 	when 'N' then 4 when 'A' then 5 when 'C' then 6 when 'V' then 7 end from importaag.historicopadrao where empresa_id=1;
@@ -188,3 +189,4 @@ natureza, origem, historicopadrao_id, jaexportado, exportarac)
 	case exportaac when 0 then false else true end
 	from importaag.lancamentos where empresa_id=1;
 	SELECT setval('ag.lancamentos_id_seq', (select max(x.id) from ag.lancamentos x), true);
+
